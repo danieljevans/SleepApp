@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.widget.Button
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import java.util.*
 
@@ -20,9 +21,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Create a toast message
+        val toast = Toast.makeText(this, "Welcome to my app!", Toast.LENGTH_SHORT).show()
+
+
         // Initialize MediaPlayer with the MP3 file from the "raw" directory
         mediaPlayer = MediaPlayer.create(this, R.raw.output)
         mediaPlayer.isLooping = true
+        mediaPlayer.start()
 
         // Set a completion listener to handle the end of the audio playback
         mediaPlayer.setOnCompletionListener {
@@ -53,6 +59,16 @@ class MainActivity : AppCompatActivity() {
         // Start the service
         val intent = Intent(this, MyService::class.java)
         startService(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Resume or pause the audio playback depending on whether the user has pressed the play button before
+        if (!mediaPlayer.isPlaying) {
+            mediaPlayer.start()
+        } else {
+            mediaPlayer.pause()
+        }
     }
 
     override fun onDestroy() {
