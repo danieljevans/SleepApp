@@ -24,24 +24,30 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer = MediaPlayer.create(this, R.raw.output)
         mediaPlayer.isLooping = true
 
+        // Set a completion listener to handle the end of the audio playback
+        mediaPlayer.setOnCompletionListener {
+            // Stop and release the MediaPlayer object
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
+
         // Find the Button widget in the layout and set a click listener on it
         val playButton: Button = findViewById(R.id.playButton)
         playButton.setBackgroundColor(0xFF555555.toInt())
 
         playButton.setOnClickListener {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.stop()
-                mediaPlayer.release()
+            if (mediaPlayer != null && mediaPlayer.isPlaying) {
+                mediaPlayer.pause()
             } else {
                 // If the MediaPlayer is not playing, start the playback
                 mediaPlayer.start()
                 // Schedule stopping the playback after 8 hours
                 stopHandler.postDelayed({
                     if (mediaPlayer.isPlaying) {
-                        mediaPlayer.stop()
-                        mediaPlayer.release()
+                        mediaPlayer.pause()
                     }
-                }, 8 * 60 * 60 * 1000) // 8 hours in milliseconds
+//                }, 8 * 60 * 60 * 1000) // 8 hours in milliseconds
+                }, 3000)
             }
         }
 
@@ -52,8 +58,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Release the MediaPlayer when the activity is destroyed to free up system resources
-        mediaPlayer.release()
         // Remove any pending stop commands
         stopHandler.removeCallbacksAndMessages(null)
     }
