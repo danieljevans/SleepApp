@@ -46,8 +46,7 @@ class MainActivity : AppCompatActivity() {
                     if (mediaPlayer.isPlaying) {
                         mediaPlayer.pause()
                     }
-//                }, 8 * 60 * 60 * 1000) // 8 hours in milliseconds
-                }, 3000)
+                }, 8 * 60 * 60 * 1000) // 8 hours in milliseconds
             }
         }
 
