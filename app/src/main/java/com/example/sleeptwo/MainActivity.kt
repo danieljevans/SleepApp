@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         // Initialize MediaPlayer with the MP3 file from the "raw" directory
         mediaPlayer = MediaPlayer.create(this, R.raw.output)
         mediaPlayer.isLooping = true
-        mediaPlayer.start()
 
         // Set a completion listener to handle the end of the audio playback
         mediaPlayer.setOnCompletionListener {
@@ -36,6 +35,8 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer.stop()
             mediaPlayer.release()
         }
+
+
 
         // Find the Button widget in the layout and set a click listener on it
         val playButton: Button = findViewById(R.id.playButton)
@@ -59,6 +60,19 @@ class MainActivity : AppCompatActivity() {
         // Start the service
         val intent = Intent(this, MyService::class.java)
         startService(intent)
+
+        // Schedule pausing the audio at 6AM
+        val timer = Timer()
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                val calendar = Calendar.getInstance()
+                val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                if ((hourOfDay > 5 && minute >= 52) && hourOfDay < 6) {
+                    mediaPlayer.pause()
+                }
+            }
+        }, 0, 60 * 1000)
     }
 
     override fun onResume() {
