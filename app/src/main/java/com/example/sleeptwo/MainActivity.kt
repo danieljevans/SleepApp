@@ -15,28 +15,19 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaPlayer: MediaPlayer
-    private val stopHandler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Create a toast message
-        val toast = Toast.makeText(this, "Welcome to my app!", Toast.LENGTH_SHORT).show()
-
-
         // Initialize MediaPlayer with the MP3 file from the "raw" directory
-        mediaPlayer = MediaPlayer.create(this, R.raw.output)
+        mediaPlayer = MediaPlayer.create(this, R.raw.compressed)
         mediaPlayer.isLooping = true
 
         // Set a completion listener to handle the end of the audio playback
         mediaPlayer.setOnCompletionListener {
-            // Stop and release the MediaPlayer object
-            mediaPlayer.stop()
-            mediaPlayer.release()
+            // Do nothing
         }
-
-
 
         // Find the Button widget in the layout and set a click listener on it
         val playButton: Button = findViewById(R.id.playButton)
@@ -48,12 +39,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // If the MediaPlayer is not playing, start the playback
                 mediaPlayer.start()
-                // Schedule stopping the playback after 8 hours
-                stopHandler.postDelayed({
-                    if (mediaPlayer.isPlaying) {
-                        mediaPlayer.pause()
-                    }
-                }, 8 * 60 * 60 * 1000) // 8 hours in milliseconds
             }
         }
 
@@ -83,12 +68,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             mediaPlayer.pause()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // Remove any pending stop commands
-        stopHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onBackPressed() {
