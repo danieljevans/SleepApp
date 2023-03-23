@@ -1,7 +1,10 @@
 package com.example.sleeptwo
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -10,11 +13,17 @@ import android.os.IBinder
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var audioManager: AudioManager
+
+    companion object {
+        const val REQUEST_WRITE_SETTINGS = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +33,15 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer = MediaPlayer.create(this, R.raw.compressed)
         mediaPlayer.isLooping = true
 
+        // Set a prepared listener to handle the proper initialization of the MediaPlayer
+        mediaPlayer.setOnPreparedListener {
+            mediaPlayer.start()
+        }
+
         // Set a completion listener to handle the end of the audio playback
         mediaPlayer.setOnCompletionListener {
-            // Do nothing
+            mediaPlayer.seekTo(0)
+            mediaPlayer.start()
         }
 
         // Find the Button widget in the layout and set a click listener on it
@@ -42,6 +57,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Get the AudioManager instance
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        // Set the volume level to 5/15 of the maximum volume
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume * 5/15, 0)
+
         // Start the service
         val intent = Intent(this, MyService::class.java)
         startService(intent)
@@ -53,11 +75,12 @@ class MainActivity : AppCompatActivity() {
                 val calendar = Calendar.getInstance()
                 val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
                 val minute = calendar.get(Calendar.MINUTE)
-                if ((hourOfDay > 5 && minute >= 52) && hourOfDay < 6) {
+                if (hourOfDay == 5 && minute == 54) {
                     mediaPlayer.pause()
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
                 }
             }
-        }, 0, 60 * 1000)
+        }, 0, 5 * 1000)
     }
 
     override fun onResume() {
@@ -68,11 +91,22 @@ class MainActivity : AppCompatActivity() {
         } else {
             mediaPlayer.pause()
         }
+        // Set the volume level to 5/15 of the maximum volume
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume * 6/15, 0)
     }
 
     override fun onBackPressed() {
         // Do nothing
     }
+
+    private fun setScreenBrightness(brightness: Float) {
+        val window = window
+        val layoutParams = window.attributes
+        layoutParams.screenBrightness = brightness
+        window.attributes = layoutParams
+    }
+
 
 }
 
