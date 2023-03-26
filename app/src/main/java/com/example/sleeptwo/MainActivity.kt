@@ -1,19 +1,14 @@
 package com.example.sleeptwo
-
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
 import android.widget.Button
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -38,11 +33,6 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer.start()
         }
 
-        // Set a completion listener to handle the end of the audio playback
-        mediaPlayer.setOnCompletionListener {
-            mediaPlayer.seekTo(0)
-            mediaPlayer.start()
-        }
 
         // Find the Button widget in the layout and set a click listener on it
         val playButton: Button = findViewById(R.id.playButton)
@@ -62,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set the volume level to 5/15 of the maximum volume
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume * 5/15, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume * 4/15, 0)
 
         // Start the service
         val intent = Intent(this, MyService::class.java)
