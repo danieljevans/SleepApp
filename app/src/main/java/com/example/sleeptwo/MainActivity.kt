@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer.start()
         }
 
-
         // Find the Button widget in the layout and set a click listener on it
         val playButton: Button = findViewById(R.id.playButton)
         playButton.setBackgroundColor(0xFF555555.toInt())
@@ -41,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         playButton.setOnClickListener {
             if (mediaPlayer != null && mediaPlayer.isPlaying) {
                 mediaPlayer.pause()
+                mediaPlayer.seekTo(0)
             } else {
                 // If the MediaPlayer is not playing, start the playback
                 mediaPlayer.start()
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 val minute = calendar.get(Calendar.MINUTE)
                 if (hourOfDay == 5 && minute == 54) {
                     mediaPlayer.pause()
+                    mediaPlayer.seekTo(0)
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
                 }
             }
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer.start()
         } else {
             mediaPlayer.pause()
+            mediaPlayer.seekTo(0)
         }
         // Set the volume level to 5/15 of the maximum volume
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
@@ -96,10 +98,7 @@ class MainActivity : AppCompatActivity() {
         layoutParams.screenBrightness = brightness
         window.attributes = layoutParams
     }
-
-
 }
-
 
 class MyService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
